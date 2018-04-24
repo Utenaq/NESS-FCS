@@ -2,7 +2,7 @@
 
 from trajectory import trajectory
 from fluorescence_wzq import fluorescence_wzq
-from reaction_wzq import reaction_wzq
+from reaction_3state import reaction_3state
 import numpy as np
 import time
 import sys
@@ -24,26 +24,39 @@ fileCycle = 3 #repeat simulation files
 #simulatoin condition initialization
 border = [3, 3, 15]
 #moleculeNum =  np.int(sys.argv[3])*1000/12 #simulated molecule number
-moleculeNum = 30
+moleculeNum = 40
 
-pA = 1
+pA = np.float(sys.argv[11])
+pB = np.float(sys.argv[12])
+
 AmoleculeNum = int(moleculeNum*pA)
-BmoleculeNum = moleculeNum - AmoleculeNum
+BmoleculeNum = int(moleculeNum*pB)
+CmoleculeNum = moleculeNum - AmoleculeNum - BmoleculeNum
 
-Adiffcoef = 2e-5*1125/np.int(sys.argv[4]) #compent A diffusion coefficient (um^2/us), ~10ms
-Bdiffcoef = 6e-5 #compent B diffusion coefficient (um^2/us)
-diffCoef = np.repeat([Adiffcoef, Bdiffcoef], [AmoleculeNum, BmoleculeNum])
+Adiffcoef = 2e-5*1125/np.int(sys.argv[7]) #component A diffusion coefficient (um^2/us), ~10ms
+Bdiffcoef = 2e-5*1125/np.int(sys.argv[7]) #compent B diffusion coefficient (um^2/us)
+Cdiffcoef = 2e-5*1125/np.int(sys.argv[7]) #compent B diffusion coefficient (um^2/us)
+diffCoef = np.repeat([Adiffcoef, Bdiffcoef, Cdiffcoef], [AmoleculeNum, BmoleculeNum, CmoleculeNum])
 
 #fluor quantum yield
-QA = np.float(sys.argv[5])
-Q = np.float(sys.argv[3]) # = light intensity of dark component/light intensity of bright component
+Qfluor=1
+QA = np.float(sys.argv[8])
+QB = np.float(sys.argv[9])
+QC = np.float(sys.argv[10])
 QacceptorA = 0
 QdonorB = 0
 QacceptorB = 0
 
 #reaction detail
-kplus=np.int(sys.argv[1])/1e6 #us-1
-kminus=np.int(sys.argv[2])/1e6 #us-1
+#Input: k01 k10 k12 k21 k20 k02
+k_Matrix=[[0 for i in range(3)] for j in range (3)]
+k_Matrix[0][1]=np.int(sys.argv[1])/1e6 #us-1
+k_Matrix[1][0]=np.int(sys.argv[2])/1e6 #us-1
+k_Matrix[1][2]=np.int(sys.argv[3])/1e6 #us-1
+k_Matrix[2][1]=np.int(sys.argv[4])/1e6 #us-1
+k_Matrix[2][0]=np.int(sys.argv[5])/1e6 #us-1
+k_Matrix[0][2]=np.int(sys.argv[6])/1e6 #us-1
+
 
 initInfo =  'trajectory simulation time interval: '+str(dt)+' us\n'+ \
             'total simulation time: '+str(totalTime*1e-6)+'x'+str(repeatCycle)+' s\n'+ \
@@ -52,22 +65,25 @@ initInfo =  'trajectory simulation time interval: '+str(dt)+' us\n'+ \
             'apparent concentration: '+str(int(moleculeNum/6.023/border[0]/border[1]/border[2]*1e4))+' pM\n'+ \
             '-------------------------------------\n'+ \
             'A ratio: '+str(pA)+'\n'+ \
+            'B ratio: '+str(pB)+'\n'+ \
             'A molecule number: '+str(AmoleculeNum)+'\n'+ \
             'B molecule number: '+str(BmoleculeNum)+'\n'+ \
+            'C molecule number: '+str(CmoleculeNum)+'\n'+ \
             'A diffusion coefficient: '+str(Adiffcoef*1e-6) +' m^2/s\n'+ \
             'B diffusion coefficient: '+str(Bdiffcoef*1e-6) +' m^2/s\n'+ \
-            'A effective brightness: '+str(QA*4.172)+'\n'+ \
+            'C diffusion coefficient: '+str(Cdiffcoef*1e-6) +' m^2/s\n'+ \
+            'A effective brightness: '+str(Qfluor*4.172)+'\n'+ \
             '-------------------------------------\n\n'+ \
-            'forward reaction rate constant (bright to dark): '+str(kplus)+'\n'+ \
-            'reverse reaction rate constant (dark to bright) '+str(kminus)+'\n'+ \
-            'relative intensity '+str(Q)+'\n'+ \
+            'Reaction rate constant : '+(' ').join(map(lambda x: (' ').join(map(str,x)),k_Matrix))+'\n'+ \
+            'Intensity A:'+str(QA)+'\n'+ \
+            'Intensity B:'+str(QB)+'\n'+ \
             '-------------------------------------\n\n'+ \
             '1-typical, 2-without poisson random, 3-typical without int, 4-without poisson random & int' + \
             'without poisson noise & crosstalk.\n\n'
 
 #log information file;
 
-path = './160518serie/D'+sys.argv[4]+'_kplus'+str(np.int(kplus*1e6))+'_kminus'+str(np.int(kminus*1e6))+'_Q'+str(Q)+'_QA'+str(QA)
+path = '../180421serie/D'+sys.argv[7]+'_QA'+str(QA)+'_QB'+str(QB)+'_QC'+str(QC)+'_pA'+str(pA)+'_pB'+str(pB)
 
 with open(path + '/log.txt', 'w') as f:
     f.write(initInfo+str(time.asctime())+' - trace: simulating...\n\n')
@@ -77,6 +93,8 @@ for fileNum in range(fileCycle):
     initPosition = [np.random.uniform(-border[0]/2, border[0]/2, moleculeNum),
                     np.random.uniform(-border[1]/2, border[1]/2, moleculeNum),
                     np.random.uniform(-border[2]/2, border[2]/2, moleculeNum)]
+    initState=np.zeros(moleculeNum)
+    for i in range (moleculeNum): initState[i]= QA if i<AmoleculeNum else(QB if (i>=AmoleculeNum and i<AmoleculeNum+BmoleculeNum) else QC)
        
     #donor channel trace file;
     #accptor channel trace file;
@@ -87,6 +105,7 @@ for fileNum in range(fileCycle):
         f.write('')
    
     for repeatNum in range(repeatCycle):
+        print('Simulating: Cycle'+str(repeatNum)+"\n")
         #trajectory simulation
         molecularTrajectory = trajectory(dt, totalTime, moleculeNum, initPosition, border = border)
         molecularTrajectory.diffusion(diffCoef)
@@ -95,10 +114,11 @@ for fileNum in range(fileCycle):
                         molecularTrajectory.positionZ[-1, :]]
 
         #reaction simulation
-        if kplus > 0:
-            reactionTrajectory=reaction_wzq(dt, totalTime, moleculeNum)
-            reactionTrajectory.react(kplus,kminus,Q)
-            fluoreDonor = fluorescence_wzq(dt, Qfluor=QA)
+        if k_Matrix[0][1] > 0:
+            reactionTrajectory=reaction_3state(dt, totalTime, moleculeNum, initState)
+            reactionTrajectory.react(k_Matrix,QA,QB,QC)
+            initState=reactionTrajectory.state[-1, :]
+            fluoreDonor = fluorescence_wzq(dt, Qfluor)
             fluoreDonor.collectPhoton(molecularTrajectory.positionX, molecularTrajectory.positionY, molecularTrajectory.positionZ,reactionTrajectory.state)
         else:
             state=np.ones([totalTime/dt,moleculeNum])

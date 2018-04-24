@@ -3,7 +3,7 @@
 import numpy as np
 
 class fluorescence_wzq:
-    """fluorescence emision simulation"""
+    """fluorescence emission simulation"""
     def __init__(self, dt, Qfluor, power = 100, wavelength = 532, radius = 0.3, axialRatio = 5, Qdetect = 0.01, sigma = 2.2e-8):
         self.dt = dt #time interval (s)
         self.power = power #laser power (uW)

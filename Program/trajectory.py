@@ -10,7 +10,7 @@ class trajectory:
         self.dt = dt    #time intervel (us)
         self.totalTime = totalTime    #length of simulated time (us)
         self.moleculeNum = moleculeNum    #number of simulated molecules
-        self.stepNum = self.totalTime/self.dt    #simulation steps
+        self.stepNum = np.int(self.totalTime/self.dt)    #simulation steps
         self.positionX = np.zeros([self.stepNum, self.moleculeNum])
         self.positionY = np.zeros([self.stepNum, self.moleculeNum])
         self.positionZ = np.zeros([self.stepNum, self.moleculeNum])
