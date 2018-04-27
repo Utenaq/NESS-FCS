@@ -2,8 +2,8 @@
 # Wiener process (Brownian motion)
 # peroidic boundary condition
 
+import minpy.numpy as np
 import numpy as np
-
 
 class reaction_3state:
     """gerenate molecule trajectories"""
@@ -32,7 +32,7 @@ class reaction_3state:
                     jump_judge = k_Matrix[0][1] / (k_Matrix[0][1]+k_Matrix[0][2])
                     if np.random.uniform(0,1)<jump_judge:
                         self.state3[j, i] = QB
-                    if np.random.uniform(0, 1) >= jump_judge:
+                    else:
                         self.state3[j, i] = QC
                 if self.state3[j, i] == QB: #state 1
                     time = np.int(np.round(np.random.exponential(1 / (k_Matrix[1][2]+k_Matrix[1][0])) / self.dt))
@@ -43,7 +43,7 @@ class reaction_3state:
                     jump_judge = k_Matrix[1][2] / (k_Matrix[1][2]+k_Matrix[1][0])
                     if np.random.uniform(0,1)<jump_judge:
                         self.state3[j, i] = QC
-                    if np.random.uniform(0, 1) >= jump_judge:
+                    else:
                         self.state3[j, i] = QA
                 if self.state3[j, i] == QC: #state 2
                     time = np.int(np.round(np.random.exponential(1 / (k_Matrix[2][0]+k_Matrix[2][1])) / self.dt))
@@ -54,6 +54,6 @@ class reaction_3state:
                     jump_judge = k_Matrix[2][0] / (k_Matrix[2][0]+k_Matrix[2][1])
                     if np.random.uniform(0,1)<jump_judge:
                         self.state3[j, i] = QA
-                    if np.random.uniform(0, 1) >= jump_judge:
+                    else:
                         self.state3[j, i] = QB
             self.state = self.state3[0:self.stepNum, :]

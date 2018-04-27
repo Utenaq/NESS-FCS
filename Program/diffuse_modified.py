@@ -3,7 +3,9 @@
 from trajectory import trajectory
 from fluorescence_wzq import fluorescence_wzq
 from reaction_3state import reaction_3state
+import minpy.numpy as np
 import numpy as np
+
 import time
 import sys
 
@@ -18,13 +20,13 @@ dt = 10 #time interval (us)
 #2**17: ~0.125 s
 totalTime = 1000000
 
-repeatCycle = 2000 #repeat totalTime simulation
+repeatCycle = 500 #repeat totalTime simulation
 fileCycle = 3 #repeat simulation files
 
 #simulatoin condition initialization
 border = [3, 3, 15]
 #moleculeNum =  np.int(sys.argv[3])*1000/12 #simulated molecule number
-moleculeNum = 40
+moleculeNum = 100
 
 pA = np.float(sys.argv[11])
 pB = np.float(sys.argv[12])
@@ -132,10 +134,13 @@ for fileNum in range(fileCycle):
         #fluoreAcceptor.collectPhoton(molecularTrajectory.positionX, molecularTrajectory.positionY, molecularTrajectory.positionZ)
 
         with open(path + '/donor_'+str(fileNum)+'.txt', 'a') as f:
-            np.savetxt(f, fluoreDonor.trace, fmt='%.3f')
+            np.savetxt(f, fluoreDonor.trace[:-10000], fmt='%.3f')
             
         with open(path + '/donor_'+str(fileNum)+'nr.txt', 'a') as f:
-            np.savetxt(f, fluoreDonor.trace_nr, fmt='%.3f')
+            np.savetxt(f, fluoreDonor.trace_nr[:-10000], fmt='%.3f')
+
+        with open(path + '/moleculenum_' + str(fileNum) + '.txt', 'a') as f:
+            np.savetxt(f, reactionTrajectory.moleculenum[:-10000], fmt='%.3f')
             #np.savetxt(f, fluoreDonor.singleTrace, fmt='%i')
         #with open('./acceptor_'+str(fileNum)+'.txt', 'a') as f:
         #    np.savetxt(f, fluoreAcceptor.trace, fmt='%i')

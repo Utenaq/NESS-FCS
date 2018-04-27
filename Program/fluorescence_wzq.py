@@ -1,5 +1,6 @@
 #fluorescence simulation
 
+import minpy.numpy as np
 import numpy as np
 
 class fluorescence_wzq:

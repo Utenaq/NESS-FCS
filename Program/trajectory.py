@@ -2,6 +2,7 @@
 #Wiener process (Brownian motion)
 #peroidic boundary condition
     
+#import minpy.numpy as np
 import numpy as np
 
 class trajectory:
@@ -14,7 +15,8 @@ class trajectory:
         self.positionX = np.zeros([self.stepNum, self.moleculeNum])
         self.positionY = np.zeros([self.stepNum, self.moleculeNum])
         self.positionZ = np.zeros([self.stepNum, self.moleculeNum])
-        self.border = np.array(border, 'f') #simulation box border length (um)
+        self.border = np.array(border) #simulation box border length (um)
+        #print(self.border)
         self.initPositionX = initPosition[0]
         self.initPositionY = initPosition[1]
         self.initPositionZ = initPosition[2]
