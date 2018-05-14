@@ -51,14 +51,16 @@ QacceptorB = 0
 
 #reaction detail
 #Input: k01 k10 k12 k21 k20 k02
-k_Matrix=[[0 for i in range(3)] for j in range (3)]
+k_Matrix=np.zeros((3,3))
 k_Matrix[0][1]=np.int(sys.argv[1])/1e6 #us-1
 k_Matrix[1][0]=np.int(sys.argv[2])/1e6 #us-1
 k_Matrix[1][2]=np.int(sys.argv[3])/1e6 #us-1
 k_Matrix[2][1]=np.int(sys.argv[4])/1e6 #us-1
 k_Matrix[2][0]=np.int(sys.argv[5])/1e6 #us-1
 k_Matrix[0][2]=np.int(sys.argv[6])/1e6 #us-1
-
+k_Matrix[0][0]=-k_Matrix[0][1]-k_Matrix[0][2]
+k_Matrix[1][1]=-k_Matrix[1][0]-k_Matrix[1][2]
+k_Matrix[2][2]=-k_Matrix[2][0]-k_Matrix[2][1]
 
 initInfo =  'trajectory simulation time interval: '+str(dt)+' us\n'+ \
             'total simulation time: '+str(totalTime*1e-6)+'x'+str(repeatCycle)+' s\n'+ \
