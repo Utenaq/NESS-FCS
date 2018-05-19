@@ -1,8 +1,8 @@
 #simulation molecular trajectories and single-molecule fluorescence trace
 
-from trajectory import trajectory
-from fluorescence_wzq import fluorescence_wzq
-from reaction_3state import reaction_3state
+from Program.trajectory import trajectory
+from Program.fluorescence_wzq import fluorescence_wzq
+from Program.reaction_3state import reaction_3state
 import minpy.numpy as np
 import numpy as np
 
