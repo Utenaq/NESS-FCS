@@ -3,7 +3,7 @@
 from Program.trajectory import trajectory
 from Program.fluorescence_surf import fluorescence_surf
 from Program.reaction_3state import reaction_3state
-import minpy.numpy as np
+#import minpy.numpy as np
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import animation
@@ -30,23 +30,19 @@ border = [3, 3, 15]
 # moleculeNum =  np.int(sys.argv[3])*1000/12 #simulated molecule number
 surfMoleculeNum = 20
 
-pA = np.float(sys.argv[11])
-pB = np.float(sys.argv[12])
+pA = np.float(sys.argv[10])
+pB = np.float(sys.argv[11])
 
 AmoleculeNum = int(surfMoleculeNum * pA)
 BmoleculeNum = int(surfMoleculeNum * pB)
 CmoleculeNum = surfMoleculeNum - AmoleculeNum - BmoleculeNum
 
-Adiffcoef = 2e-5 * 1125 / np.int(sys.argv[7])  # component A diffusion coefficient (um^2/us), ~10ms
-Bdiffcoef = 2e-5 * 1125 / np.int(sys.argv[7])  # compent B diffusion coefficient (um^2/us)
-Cdiffcoef = 2e-5 * 1125 / np.int(sys.argv[7])  # compent B diffusion coefficient (um^2/us)
-diffCoef = np.repeat([Adiffcoef, Bdiffcoef, Cdiffcoef], [AmoleculeNum, BmoleculeNum, CmoleculeNum])
 
 # fluor quantum yield
 Qfluor = 1
-QA = np.float(sys.argv[8])
-QB = np.float(sys.argv[9])
-QC = np.float(sys.argv[10])
+QA = np.float(sys.argv[7])
+QB = np.float(sys.argv[8])
+QC = np.float(sys.argv[9])
 QacceptorA = 0
 QdonorB = 0
 QacceptorB = 0
@@ -76,21 +72,19 @@ initInfo = 'trajectory simulation time interval: ' + str(dt) + ' us\n' + \
            'A molecule number: ' + str(AmoleculeNum) + '\n' + \
            'B molecule number: ' + str(BmoleculeNum) + '\n' + \
            'C molecule number: ' + str(CmoleculeNum) + '\n' + \
-           'A diffusion coefficient: ' + str(Adiffcoef * 1e-6) + ' m^2/s\n' + \
-           'B diffusion coefficient: ' + str(Bdiffcoef * 1e-6) + ' m^2/s\n' + \
-           'C diffusion coefficient: ' + str(Cdiffcoef * 1e-6) + ' m^2/s\n' + \
            'A effective brightness: ' + str(Qfluor * 4.172) + '\n' + \
            '-------------------------------------\n\n' + \
            'Reaction rate constant : ' + (' ').join(map(lambda x: (' ').join(map(str, x)), k_Matrix)) + '\n' + \
            'Intensity A:' + str(QA) + '\n' + \
            'Intensity B:' + str(QB) + '\n' + \
+            'Intensity C:' + str(QC) + '\n' + \
            '-------------------------------------\n\n' + \
            '1-typical, 2-without poisson random, 3-typical without int, 4-without poisson random & int' + \
            'without poisson noise & crosstalk.\n\n'
 
 # log information file;
 
-path = '../LnrSimulation/180519serie/D' + sys.argv[7] + '_QA' + str(QA) + '_QB' + str(QB) + '_QC' + str(QC) + '_pA' + str(
+path = '../LnrSimulation/180521serie/' + 'K_'+('_').join(map(lambda x: ('_').join(map(str, x)), k_Matrix)) + '_QA' + str(QA) + '_QB' + str(QB) + '_QC' + str(QC) + '_pA' + str(
     pA) + '_pB' + str(pB)
 
 with open(path + '/log.txt', 'w') as f:
@@ -180,6 +174,7 @@ for fileNum in range(fileCycle):
         # fluoreAcceptor.collectPhoton(molecularTrajectory.positionX, molecularTrajectory.positionY, molecularTrajectory.positionZ)
         #print(np.shape(reactionTrajectory.moleculeNum))
         update(x,fluoreDonor.trace,fluoreDonor.trace_nr,reactionTrajectory.moleculenumtrace)
+        plt.savefig(path+'/monitor.png')
         #ax2.plot(x, reactionTrajectory.moleculenumtrace[:,0])
         #plt.ioff()
         #plt.show()

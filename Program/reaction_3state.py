@@ -2,7 +2,7 @@
 # Wiener process (Brownian motion)
 # peroidic boundary condition
 
-import minpy.numpy as np
+#import minpy.numpy as np
 import numpy as np
 
 class reaction_3state:
