@@ -10,9 +10,10 @@ from matplotlib import animation
 from mpl_toolkits.mplot3d import axes3d
 import time
 import sys
+import os
 
 # paramaters initials
-dt = 20  # time interval (us)
+dt = 10  # time interval (us)
 
 # simulation time (us)
 # 2**21: ~2 s
@@ -84,8 +85,11 @@ initInfo = 'trajectory simulation time interval: ' + str(dt) + ' us\n' + \
 
 # log information file;
 
-path = '../LnrSimulation/180521serie/' + 'K_'+('_').join(map(lambda x: ('_').join(map(str, x)), k_Matrix)) + '_QA' + str(QA) + '_QB' + str(QB) + '_QC' + str(QC) + '_pA' + str(
+path = '../LnrSimulation/180522serie/' + 'K_'+('_').join(map(lambda x: ('_').join(map(str, x)), k_Matrix)) + '_QA' + str(QA) + '_QB' + str(QB) + '_QC' + str(QC) + '_pA' + str(
     pA) + '_pB' + str(pB)
+
+try: os.makedirs(path)
+except: pass
 
 with open(path + '/log.txt', 'w') as f:
     f.write(initInfo + str(time.asctime()) + ' - trace: simulating...\n\n')
