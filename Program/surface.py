@@ -1,8 +1,8 @@
 # simulation molecular trajectories and single-molecule fluorescence trace
 
-from Program.trajectory import trajectory
-from Program.fluorescence_surf import fluorescence_surf
-from Program.reaction_3state import reaction_3state
+from trajectory import trajectory
+from fluorescence_surf import fluorescence_surf
+from reaction_3state import reaction_3state
 #import minpy.numpy as np
 import numpy as np
 import matplotlib.pyplot as plt
@@ -21,18 +21,18 @@ dt = 10  # time interval (us)
 # 2**19: ~0.5 s
 # 2**18: ~0.25 s
 # 2**17: ~0.125 s
-totalTime = 10000000
+totalTime = 1000000
 
 repeatCycle = 100  # repeat totalTime simulation
-fileCycle = 3  # repeat simulation files
+fileCycle = 1  # repeat simulation files
 
 # simulatoin condition initialization
 border = [3, 3, 15]
 # moleculeNum =  np.int(sys.argv[3])*1000/12 #simulated molecule number
-surfMoleculeNum = 20
+surfMoleculeNum = 10
 
-pA = np.float(sys.argv[10])
-pB = np.float(sys.argv[11])
+pA = 1
+pB = 0
 
 AmoleculeNum = int(surfMoleculeNum * pA)
 BmoleculeNum = int(surfMoleculeNum * pB)
@@ -85,7 +85,7 @@ initInfo = 'trajectory simulation time interval: ' + str(dt) + ' us\n' + \
 
 # log information file;
 
-path = '../LnrSimulation/180522serie/' + 'K_'+('_').join(map(lambda x: ('_').join(map(str, x)), k_Matrix)) + '_QA' + str(QA) + '_QB' + str(QB) + '_QC' + str(QC) + '_pA' + str(
+path = '../LnrSimulation/180524serie/' + 'K_'+('_').join(map(lambda x: ('_').join(map(str, x)), k_Matrix)) + '_QA' + str(QA) + '_QB' + str(QB) + '_QC' + str(QC) + '_pA' + str(
     pA) + '_pB' + str(pB)
 
 try: os.makedirs(path)
@@ -95,7 +95,7 @@ with open(path + '/log.txt', 'w') as f:
     f.write(initInfo + str(time.asctime()) + ' - trace: simulating...\n\n')
 
 # plot
-plt.ion()
+#plt.ion()
 fig = plt.figure(figsize=(20,10))
 ax1 = fig.add_subplot(211)
 ax2 = fig.add_subplot(212)
@@ -124,8 +124,8 @@ line213, = ax2.plot(x_m,np.zeros(1000))
 # ax2.plot(x, reactionTrajectory.moleculenum[2][:-10000], c='b')
 
 def update(t,data01,data02,data11):
-    ax1.set_ylim(0,50)
-    ax2.set_ylim(0,20)
+    ax1.set_ylim(0,30)
+    ax2.set_ylim(0,10)
     line1.set_data (t, data01)
     line2.set_data (t, data02)
     line31.set_data (t, data11[:, 0])
@@ -178,7 +178,7 @@ for fileNum in range(fileCycle):
         # fluoreAcceptor.collectPhoton(molecularTrajectory.positionX, molecularTrajectory.positionY, molecularTrajectory.positionZ)
         #print(np.shape(reactionTrajectory.moleculeNum))
         update(x,fluoreDonor.trace,fluoreDonor.trace_nr,reactionTrajectory.moleculenumtrace)
-        plt.savefig(path+'/monitor.png')
+        if repeatNum==0: plt.savefig(path+'/InitTrace.png')
         #ax2.plot(x, reactionTrajectory.moleculenumtrace[:,0])
         #plt.ioff()
         #plt.show()
@@ -194,7 +194,8 @@ for fileNum in range(fileCycle):
         # with open('./acceptor_'+str(fileNum)+'.txt', 'a') as f:
         #    np.savetxt(f, fluoreAcceptor.trace, fmt='%i')
         #    #np.savetxt(f, fluoreAcceptor.singleTrace, fmt='%i')
-plt.ioff()
-plt.show()
+#plt.ioff()
+plt.savefig(path+'/EndTrace.png')
+#plt.show()
 with open(path + '/log.txt', 'a') as f:
     f.write(str(time.asctime()) + ' - trace: done.\n\n')

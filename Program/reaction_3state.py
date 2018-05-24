@@ -13,7 +13,7 @@ class reaction_3state:
         self.totalTime = totalTime  # length of simulated time (us)
         self.moleculeNum = moleculeNum  # number of simulated molecules
         self.stepNum = np.int(self.totalTime/self.dt)  # simulation steps
-        self.size = self.stepNum + 100000
+        self.size = self.stepNum + 1000000
         self.state3 = np.zeros([self.size, self.moleculeNum])
         self.moleculenum3 = np.zeros([self.size, 3])
         self.state3[0, :] = initState
