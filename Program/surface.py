@@ -154,10 +154,13 @@ for fileNum in range(fileCycle):
 
     # donor channel trace file;
     # accptor channel trace file;
-    with open(path + '/donor_' + str(fileNum) + '.txt', 'a') as f:
+    with open(path + '/donor_' + str(fileNum) + '.dat', 'a') as f:
         f.write('')
 
-    with open(path + '/donor_' + str(fileNum) + 'nr.txt', 'a') as f:
+    with open(path + '/donor_' + str(fileNum) + 'nr.dat', 'a') as f:
+        f.write('')
+
+    with open(path + '/moleculenum_' + str(fileNum) + '.dat', 'a') as f:
         f.write('')
 
     for repeatNum in range(repeatCycle):
@@ -182,13 +185,13 @@ for fileNum in range(fileCycle):
         #ax2.plot(x, reactionTrajectory.moleculenumtrace[:,0])
         #plt.ioff()
         #plt.show()
-        with open(path + '/donor_' + str(fileNum) + '.txt', 'a') as f:
+        with open(path + '/donor_' + str(fileNum) + '.dat', 'a') as f:
             np.savetxt(f, fluoreDonor.trace, fmt='%.3f')
 
-        with open(path + '/donor_' + str(fileNum) + 'nr.txt', 'a') as f:
+        with open(path + '/donor_' + str(fileNum) + 'nr.dat', 'a') as f:
             np.savetxt(f, fluoreDonor.trace_nr, fmt='%.3f')
 
-        with open(path + '/moleculenum_' + str(fileNum) + '.txt', 'a') as f:
+        with open(path + '/moleculenum_' + str(fileNum) + '.dat', 'a') as f:
             np.savetxt(f, reactionTrajectory.moleculenumtrace, fmt='%.3f')
             # np.savetxt(f, fluoreDonor.singleTrace, fmt='%i')
         # with open('./acceptor_'+str(fileNum)+'.txt', 'a') as f:
