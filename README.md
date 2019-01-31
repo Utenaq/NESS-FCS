@@ -1,3 +1,5 @@
-# Fluorescence_Simulation_for_Nonequilibrium_Steady_States
+# NESS-FCS
 
-This is source codes of a current project in Zhao Lab, PKU.
+Zhao Lab 2018, PKU.
+
+Please contact Zhuoran Qiao utenaq@gmail.com for any questions.
